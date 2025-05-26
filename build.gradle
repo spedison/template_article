@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(22))
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('generateData', JavaExec) {
+    group = 'relatorio'
+    description = 'Executa o programa Java para gerar os dados CSV'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'gerar_dados'
+    outputs.file('dados.csv')
+}
+
+tasks.register('plotGraph') {
+    group = 'relatorio'
+    description = 'Gera gráfico com Gnuplot'
+    dependsOn 'generateData'
+    doLast {
+        exec {
+            commandLine 'gnuplot', 'gerar_grafico.gnuplot'
+        }
+    }
+}
+
+tasks.register('compileLatex') {
+    group = 'relatorio'
+    description = 'Compila o LaTeX'
+    dependsOn 'plotGraph'
+    doLast {
+        exec {
+            commandLine 'pdflatex', 'relatorio.tex'
+        }
+    }
+}
+
+tasks.build {
+    dependsOn 'compileLatex'
+}
+

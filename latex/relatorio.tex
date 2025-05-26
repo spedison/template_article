@@ -1,0 +1,53 @@
+\documentclass[twocolumn,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{setspace}
+
+\geometry{a4paper, margin=2.5cm}
+\setstretch{1.2}
+
+\title{\bfseries Análise de Sinais com Geração Automatizada}
+\author{Nome do Autor}
+\date{}
+
+\begin{document}
+
+\twocolumn[
+\maketitle
+
+\begin{abstract}
+\noindent
+Este trabalho apresenta um fluxo automatizado para análise de sinais senoidais utilizando Java, Gnuplot e LaTeX. O objetivo é ilustrar como integrar diferentes ferramentas para produzir relatórios científicos reprodutíveis.
+\vspace{1em}
+\end{abstract}
+]
+
+\section{Introdução}
+Este projeto demonstra a geração de dados e gráficos integrando linguagens e ferramentas com LaTeX.
+
+\section{Geração dos Dados}
+Os dados foram gerados com o seguinte algoritmo:
+
+\begin{equation}
+y(t) = \sin(t)
+\end{equation}
+
+\section{Visualização}
+O gráfico da Figura~\ref{fig:grafico} mostra os valores calculados.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{grafico.jpg}
+\caption{Sinal senoidal gerado por Java e plotado com Gnuplot}
+\label{fig:grafico}
+\end{figure}
+
+\section{Conclusão}
+A integração entre Java, Gnuplot e LaTeX oferece uma abordagem poderosa e flexível para automação de relatórios científicos.
+
+\end{document}
+
