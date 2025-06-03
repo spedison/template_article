@@ -53,6 +53,5 @@ gradle-app.setting
 /latex/*.bbl
 /latex/*.blg
 /latex/*.fls
-/latex/*.fls
 /latex/*.fdb_latexmk
 /latex/*.pdf

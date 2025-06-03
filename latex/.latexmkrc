@@ -3,7 +3,7 @@ $bibtex_use = 1;              # Usa BibTeX
 $interaction = 'nonstopmode';
 $synctex = 1;
 
-$out_dir = './';           # Todos os arquivos compilados vão para ./build
+$out_dir = '.';           # Todos os arquivos compilados vão para ./build
 $jobname = 'relatorio-final';
 
 # Cria o diretório se não existir

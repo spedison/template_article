@@ -14,7 +14,7 @@ public class GeradorDados {
             writer.println("Tempo,Valor,ValorRuido");
             for (int t = 0; t <= 100; t++) {
                 Double r = rand.nextDouble() * amplitudeRuido;
-                writer.printf(Locale.US,"%.4f,%.4f,%.4f%n", t/10., Math.sin(t/10.), Math.sin(t/10.) + amplitudeRuido);
+                writer.printf(Locale.US,"%.4f,%.4f,%.4f%n", t/10., Math.sin(t/10.) * Math.sin(t * 30)*(amplitudeRuido/30.), Math.sin(t/10.) + amplitudeRuido);
             }
         } catch (Exception e) {
             e.printStackTrace();

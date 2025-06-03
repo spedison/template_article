@@ -62,15 +62,20 @@ tasks.register('plotGraph', Exec) {
     outputs.file("$project.projectDir/dados/grafico.jpg")
 }
 
-tasks.register('compileLatex', Exec) {
+tasks.register('compileLatexOnly', Exec) {
 
     group = 'relatorio'
     description = 'Compila o LaTeX Completamente'
 
-    dependsOn 'plotGraph'
+    def latexCommand = project.findProperty('latexCommand') ?: '/usr/bin/latexmk'
+
+    onlyIf {
+        file(latexCommand).exists()
+    }
+
     workingDir = file("${projectDir}/latex")
 
-    commandLine '/usr/bin/latexmk', '-pdf', 'relatorio.tex'
+    commandLine latexCommand, '-pdf', 'relatorio.tex'
 
     // Declara dependência explícita do gráfico e todos arquivo de Artigo.
     inputs.file("$project.projectDir/dados/grafico.jpg")
@@ -83,15 +88,43 @@ tasks.register('compileLatex', Exec) {
     inputs.file("$project.projectDir/latex/capitulos/resultados.tex")
     inputs.file("$project.projectDir/latex/referencias.bib")
 
-    outputs.file("$project.projectDir/dados/relatorio-final.pdf")
-}
-
-tasks.build {
-    // dependsOn 'compileLatex'
+    outputs.file("$project.projectDir/latex/relatorio-final.pdf")
 }
 
 
-tasks.register("limpaDadosLatex", Exec ) {
+tasks.register('compileLatex', Exec) {
+
+        group = 'relatorio'
+        description = 'Compila o LaTeX Completamente'
+
+        def latexCommand = project.findProperty('latexCommand') ?: '/usr/bin/latexmk'
+
+        onlyIf {
+            file(latexCommand).exists()
+        }
+
+        dependsOn 'plotGraph'
+        workingDir = file("${projectDir}/latex")
+
+        commandLine latexCommand, '-pdf', 'relatorio.tex'
+
+        // Declara dependência explícita do gráfico e todos arquivo de Artigo.
+        inputs.file("$project.projectDir/dados/grafico.jpg")
+        inputs.file("$project.projectDir/latex/relatorio.tex")
+        inputs.file("$project.projectDir/latex/capitulos/abstract.tex")
+        inputs.file("$project.projectDir/latex/capitulos/conclusao.tex")
+        inputs.file("$project.projectDir/latex/capitulos/fundamentacao.tex")
+        inputs.file("$project.projectDir/latex/capitulos/introducao.tex")
+        inputs.file("$project.projectDir/latex/capitulos/metodologia.tex")
+        inputs.file("$project.projectDir/latex/capitulos/resultados.tex")
+        inputs.file("$project.projectDir/latex/referencias.bib")
+
+        outputs.file("$project.projectDir/latex/relatorio-final.pdf")
+}
+
+
+
+tasks.register("limpaDadosLatex", Exec) {
     group = "relatorio"
     description = "Executa latexmk para limpar os arquivos temporários"
 
@@ -106,32 +139,24 @@ tasks.register('limparDados') {
     description = 'Remove completamente o diretório dados/ e os arquivos ...'
 
     // Define que esta task será seguida por runExternalProgram
-    finalizedBy 'limpaDadosLatex'
+    dependsOn 'limpaDadosLatex'
 
     doLast {
 
         def dadosDir = file("${project.projectDir}/dados")
-        def arquivoBBL = file("${project.projectDir}/latex/")
-
         if (dadosDir.exists()) {
-
             println "Apagando diretório: ${dadosDir}"
             delete dadosDir
-
-            println("--------------")
-            println(dadosDir)
-            println("--------------")
+            println "Apagado diretório: ${dadosDir}"
             mkdir(dadosDir)
-
         } else {
-            println "Diretório dados/ já não existe. Nada a remover."
+            println "Diretório dados já não existe. Nada a remover."
         }
 
         def bblDir = file("${project.projectDir}/latex")
 
         if (bblDir.exists()) {
             def arquivosBBL = bblDir.listFiles().findAll { it.name.endsWith('.bbl') }
-
             if (arquivosBBL) {
                 println "Apagando arquivos .bbl encontrados em ${bblDir}:"
                 arquivosBBL.each { file ->
@@ -151,5 +176,3 @@ tasks.register('limparDados') {
 tasks.named('clean').configure {
     finalizedBy('limparDados')
 }
-
-
