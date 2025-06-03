@@ -7,13 +7,16 @@
 \usepackage{float}
 \usepackage{geometry}
 \usepackage{setspace}
+\usepackage{url}
+\usepackage[alf]{abntex2cite}
+\usepackage{indentfirst}
 
 \geometry{a4paper, margin=2.5cm}
 \setstretch{1.2}
 
 \title{\bfseries Análise de Sinais com Geração Automatizada}
 \author{Edison Araújo}
-\date{}
+\date{\today}
 
 \begin{document}
 
@@ -26,7 +29,11 @@
     \input{capitulos/fundamentacao}
     \input{capitulos/metodologia}
     \vspace{-1cm}
+    \input{capitulos/resultados}
     \input{capitulos/conclusao}
+
+
+    \bibliography{referencias}
 
 \end{document}
 

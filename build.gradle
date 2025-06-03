@@ -63,13 +63,16 @@ tasks.register('plotGraph', Exec) {
 }
 
 tasks.register('compileLatex', Exec) {
+
     group = 'relatorio'
-    description = 'Compila o LaTeX'
+    description = 'Compila o LaTeX Completamente'
+
     dependsOn 'plotGraph'
     workingDir = file("${projectDir}/latex")
-    // workingDir = Paths.get(project.projectDir,"latex")
-    commandLine '/usr/bin/pdflatex', '-output-directory=../dados' , './relatorio.tex'
-    // Declara dependência explícita do gráfico
+
+    commandLine '/usr/bin/latexmk', '-pdf', 'relatorio.tex'
+
+    // Declara dependência explícita do gráfico e todos arquivo de Artigo.
     inputs.file("$project.projectDir/dados/grafico.jpg")
     inputs.file("$project.projectDir/latex/relatorio.tex")
     inputs.file("$project.projectDir/latex/capitulos/abstract.tex")
@@ -78,10 +81,75 @@ tasks.register('compileLatex', Exec) {
     inputs.file("$project.projectDir/latex/capitulos/introducao.tex")
     inputs.file("$project.projectDir/latex/capitulos/metodologia.tex")
     inputs.file("$project.projectDir/latex/capitulos/resultados.tex")
-    outputs.file("$project.projectDir/dados/relatorio.pdf")
+    inputs.file("$project.projectDir/latex/referencias.bib")
+
+    outputs.file("$project.projectDir/dados/relatorio-final.pdf")
 }
 
 tasks.build {
     // dependsOn 'compileLatex'
 }
+
+
+tasks.register("limpaDadosLatex", Exec ) {
+    group = "relatorio"
+    description = "Executa latexmk para limpar os arquivos temporários"
+
+    executable = "/usr/bin/latexmk" // substitua pelo nome do executável, ex: "python" ou "java"
+    args = ["-C", "relatorio"] // substitua pelos argumentos desejados
+
+    workingDir = file("$projectDir/latex") // define o diretório onde o processo será executado
+}
+
+tasks.register('limparDados') {
+    group = 'relatorio'
+    description = 'Remove completamente o diretório dados/ e os arquivos ...'
+
+    // Define que esta task será seguida por runExternalProgram
+    finalizedBy 'limpaDadosLatex'
+
+    doLast {
+
+        def dadosDir = file("${project.projectDir}/dados")
+        def arquivoBBL = file("${project.projectDir}/latex/")
+
+        if (dadosDir.exists()) {
+
+            println "Apagando diretório: ${dadosDir}"
+            delete dadosDir
+
+            println("--------------")
+            println(dadosDir)
+            println("--------------")
+            mkdir(dadosDir)
+
+        } else {
+            println "Diretório dados/ já não existe. Nada a remover."
+        }
+
+        def bblDir = file("${project.projectDir}/latex")
+
+        if (bblDir.exists()) {
+            def arquivosBBL = bblDir.listFiles().findAll { it.name.endsWith('.bbl') }
+
+            if (arquivosBBL) {
+                println "Apagando arquivos .bbl encontrados em ${bblDir}:"
+                arquivosBBL.each { file ->
+                    println " - ${file.name}"
+                    file.delete()
+                }
+            } else {
+                println "Nenhum arquivo .bbl encontrado em ${dadosDir}."
+            }
+        } else {
+            println "Diretório ${bblDir} não existe."
+        }
+    }
+}
+
+// Garante que 'limparDados' sempre roda após 'clean'
+tasks.named('clean').configure {
+    finalizedBy('limparDados')
+}
+
 
